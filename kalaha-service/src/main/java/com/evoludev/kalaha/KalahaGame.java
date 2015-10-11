@@ -34,14 +34,6 @@ public class KalahaGame {
 	private Player playerToMove;
 	private boolean gameFinished;
 	
-	public static int getNumPlayers() {
-		return NUM_PLAYERS;
-	}
-
-	public static int getNumHouses() {
-		return HOUSES_PER_PLAYER;
-	}
-
 	public Player getPlayerToMove() {
 		return playerToMove;
 	}
@@ -50,8 +42,8 @@ public class KalahaGame {
 		return players;
 	}
 
-	public void setPlayers(List<Player> players) {
-		this.players = players;
+	public boolean isGameFinished() {
+		return gameFinished;
 	}
 
 	private KalahaGame() {
@@ -95,12 +87,13 @@ public class KalahaGame {
 		return this;
 	}
 	
-	public static KalahaGame newGame(String player1, String player2) {
-		return new KalahaGame().init(player1, player2);
+	public Player getWinningPlayer() {
+		return players.stream().max((p1, p2) -> Integer.compare(
+				p1.getStore().getSeeds(), p2.getStore().getSeeds())).get();
 	}
-	
-	public TurnOutcome makeMove(int houseNum) {
 
+	public TurnOutcome makeMove(int houseNum) {
+	
 		//Preconditions.checkState(!this.isGameFinished(), "Game has finished. Please restart to play again");
 		// TODO: Validate houseNum
 		Pit lastSowedPit = this.playerToMove.makeMove(houseNum);
@@ -124,16 +117,7 @@ public class KalahaGame {
 		this.playerToMove = this.playerToMove.getNextPlayer();
 		return TurnOutcome.OK;
 	}
-	
-	public Player getWinningPlayer() {
-		return players.stream().max((p1, p2) -> Integer.compare(
-				p1.getStore().getSeeds(), p2.getStore().getSeeds())).get();
-	}
 
-	public boolean isGameFinished() {
-		return gameFinished;
-	}
-	
 	public String getBoardStateAsString() {
 		Player firstPlayer = players.get(0);
 		StringBuilder str = new StringBuilder("[" + this.playerToMove.getIndex() + "]" 
@@ -142,5 +126,9 @@ public class KalahaGame {
 			str.append(pit.getStringState());
 		}
 		return str.toString();
+	}
+
+	public static KalahaGame newGame(String player1, String player2) {
+		return new KalahaGame().init(player1, player2);
 	}
 }
