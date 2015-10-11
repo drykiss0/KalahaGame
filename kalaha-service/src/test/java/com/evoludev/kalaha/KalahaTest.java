@@ -47,7 +47,15 @@ public class KalahaTest {
 	@Test 
 	public void testBoardState() {
 		String strNumeric = kalaha.getBoardState().replaceAll("[^0-9]", "");
-		assertEquals("066666606666660", strNumeric);
+		assertEquals("066666606666660", strNumeric);		
+	}
+	
+	@Test
+	public void testSingleMove() {
+		KalahaGame fromStateKalaha = KalahaGame.fromBoardState("0|2|2|1|11|11|9|3|8|8|7|7|0|1|2", "A", "B");
+		fromStateKalaha.makeMove(3);
+		//		1|3|0|1|0|12|10|8|9|9|8|8|0|2|2
+		assertEquals("1|3|3|1|0|12|10|4|9|9|8|8|1|2|2", fromStateKalaha.getBoardState());
 	}
 	
 	@Test
@@ -66,5 +74,28 @@ public class KalahaTest {
 		assertEquals(expectedState, kalaha.getBoardState());
 		assertEquals(0, kalaha.getWinningPlayer().getIndex());
 		assertEquals(0, kalaha.getPlayerToMove().getIndex());
+	}
+	
+	@Test
+	public void testCompleteGamePlay() {
+		int[] moves = {0,1,5,2,4,3,1,4,3,3,5,2,3,5,4,1,0,2,1,2,4,3,2,2,4,5,5,0,1,1,5,4,3,5,2,4};
+		String expectedState = "0|0|0|0|0|0|0|59|0|0|0|0|0|0|13";
+		makeMultiMove(moves);
+		assertEquals(0, kalaha.getWinningPlayer().getIndex());
+		assertEquals(expectedState, kalaha.getBoardState());
+		assertTrue(kalaha.isGameFinished());
+	}
+	
+	private void makeMultiMove(int[] moves) {
+		for (int m = 0; m < moves.length; m++) {
+			System.out.println("Move = " + (moves[m] + 1));
+			try {
+				kalaha.makeMove(moves[m]);
+			} catch (IllegalArgumentException e) {
+				System.out.println(e.getMessage());
+				System.out.println("Move[" + m + "]=" + moves[m] + " State=" + kalaha.getBoardState());
+			}
+			System.out.println(kalaha.getBoardState());
+		}
 	}
 }

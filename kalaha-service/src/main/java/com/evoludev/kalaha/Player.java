@@ -3,6 +3,10 @@ package com.evoludev.kalaha;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
+
+import com.google.common.base.Preconditions;
 
 public class Player {
 
@@ -23,6 +27,11 @@ public class Player {
 	}
 	
 	public Pit makeMove(int houseNum) {
+		
+		Set<Integer> validHouseNums = getValidHouseNumbers();
+		Preconditions.checkArgument(validHouseNums.contains(houseNum), 
+				"Invalid house number: " + houseNum + ". Valid house numbers for player " + toString() 
+				+ " are: " + validHouseNums);
 		int seeds = houses.get(houseNum).retrieveSeeds();
 		return sowSeeds(houses.get(houseNum).getNextPit(), seeds);
 	}
@@ -44,8 +53,19 @@ public class Player {
 		return sowSeeds(pit.getNextPit(), seedsToSow);
 	}
 
+	private List<House> getNonEmptyHouses() {
+		return houses.stream().filter(h -> h.getSeeds() > 0).collect(Collectors.toList());
+	}
+	
+	public Set<Integer> getValidHouseNumbers() {
+		// Need it sorted for messages output 
+		return getNonEmptyHouses().stream()
+				.map(h -> h.getOrdinal() - getFirstHouse().getOrdinal()).collect(
+				Collectors.toCollection(() -> new TreeSet<Integer>()));		
+	}
+	
 	public boolean isAllHousesEmpty() {
-		return this.houses.stream().allMatch(h -> h.getSeeds() == 0);
+		return getNonEmptyHouses().isEmpty();
 	}
 
 	public void moveAllOwnedSeedsToStore() {
@@ -68,6 +88,10 @@ public class Player {
 		return store;
 	}
 	
+	public List<House> getHouses() {
+		return houses;
+	}
+
 	public int getIndex() {
 		return index;
 	}
@@ -86,5 +110,10 @@ public class Player {
 
 	public void setNextPlayer(Player nextPlayer) {
 		this.nextPlayer = nextPlayer;
+	}
+	
+	@Override
+	public String toString() {
+		return getName() + "[" + getIndex() + "]";
 	}
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 
@@ -71,7 +72,7 @@ public class KalahaGame {
 			allPits.add(playerPitEndIdx, player.getStore());
 		}
 		
-		// Initialize next and opposite pits
+		// Compute and link next and opposite pits
 		for (int idx = 0; idx < allPits.size(); idx ++) {
 			
 			Pit pit = allPits.get(idx);
@@ -81,7 +82,7 @@ public class KalahaGame {
 				house.setOppositeHouse((House) allPits.get(HOUSES_PER_PLAYER * NUM_PLAYERS - idx));
 			}
 		}
-		// Initialize next players
+		// Link next players
 		for (int pIdx = 0; pIdx < players.size(); pIdx++) {
 			players.get(pIdx).setNextPlayer(players.get((pIdx + 1) % players.size()));
 		}
@@ -96,20 +97,24 @@ public class KalahaGame {
 
 	public KalahaGame makeMove(int houseNum) {
 	
-		//Preconditions.checkState(!this.isGameFinished(), "Game has finished. Please restart to play again");
-		// TODO: Validate houseNum
-		Pit lastSowedPit = this.playerToMove.makeMove(houseNum);
+		/* House and game state checks */
+		Preconditions.checkState(!this.isGameFinished(), "Game has finished. Please restart to play again");
+		Preconditions.checkArgument(!playerToMove.isAllHousesEmpty(), "Invalid player turn or game finished. Player " + playerToMove + " has all empty houses!");
+		/* Checks finished */
 		
+		Pit lastSowedPit = this.playerToMove.makeMove(houseNum);
+
 		// TODO: Game rules could use refactoring, returns in the middle are ugly
-		if (this.playerToMove.isAllHousesEmpty()) {
-			this.playerToMove.getNextPlayer().moveAllOwnedSeedsToStore();
+		List<Player> playersWithEmptyHouses = players.stream().filter(p -> p.isAllHousesEmpty()).collect(Collectors.toList());
+		if (!playersWithEmptyHouses.isEmpty()) {
+			playersWithEmptyHouses.get(0).getNextPlayer().moveAllOwnedSeedsToStore();
 			this.gameFinished = true;
 			return this;
 		}		
 		if (lastSowedPit.equals(playerToMove.getStore())) {
 			return this;
 		}
-		if (lastSowedPit.isHouse() && playerToMove.isOwnHouse(lastSowedPit)) {
+		if (lastSowedPit.getSeeds() == 1 && lastSowedPit.isHouse() && playerToMove.isOwnHouse(lastSowedPit)) {
 			House lastSowedHouse = (House) lastSowedPit;
 			if (!lastSowedHouse.getOppositeHouse().isEmpty()) {
 				int oppositeSeeds = lastSowedHouse.getOppositeHouse().retrieveSeeds();
