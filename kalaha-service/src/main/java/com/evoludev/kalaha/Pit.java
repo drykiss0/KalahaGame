@@ -1,4 +1,4 @@
-package com.evoludev.kalaha.model;
+package com.evoludev.kalaha;
 
 /**
  * @author antonio

@@ -8,10 +8,6 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.evoludev.kalaha.model.House;
-import com.evoludev.kalaha.model.KalahaGame;
-import com.evoludev.kalaha.model.Pit;
-
 public class KalahaTest {
 
 	private KalahaGame kalaha;
