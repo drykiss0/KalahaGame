@@ -12,8 +12,8 @@ public class House extends Pit {
 	 * @return number of seeds and removes all seeds from this house
 	 */
 	public int retrieveSeeds() {
-		int retrievedSeeds = this.seeds;
-		this.seeds = 0;
+		int retrievedSeeds = getSeeds();
+		setSeeds(0);
 		return retrievedSeeds;
 	}
 	
@@ -30,11 +30,6 @@ public class House extends Pit {
 		return false;
 	}
 
-	@Override
-	public String getStringState() {
-		return "(" + getSeeds() + ")";
-	}
-	
 	@Override
 	public String toString() {
 		return "House [" + getSeeds() + "]";

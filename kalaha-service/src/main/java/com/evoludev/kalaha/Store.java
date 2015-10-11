@@ -10,10 +10,6 @@ public class Store extends Pit {
 		super(ordinal, seeds);
 	}
 
-	public String getStringState() {
-		return "|" + getSeeds() + "|";
-	}
-	
 	@Override
 	public String toString() {
 		return "Store [" + getSeeds() + "]";

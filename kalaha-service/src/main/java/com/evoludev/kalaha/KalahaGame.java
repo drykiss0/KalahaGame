@@ -2,7 +2,9 @@ package com.evoludev.kalaha;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 
 public class KalahaGame {
@@ -118,17 +120,32 @@ public class KalahaGame {
 		return TurnOutcome.OK;
 	}
 
-	public String getBoardStateAsString() {
+	public String getBoardState() {
 		Player firstPlayer = players.get(0);
-		StringBuilder str = new StringBuilder("[" + this.playerToMove.getIndex() + "]" 
-				+ firstPlayer.getFirstHouse().getStringState());
+		StringBuilder str = new StringBuilder(this.playerToMove.getIndex() + "|" 
+				+ firstPlayer.getFirstHouse().getSeeds() + "|");
 		for (Pit pit = firstPlayer.getFirstHouse().getNextPit(); pit != firstPlayer.getFirstHouse(); pit = pit.getNextPit()) {
-			str.append(pit.getStringState());
+			str.append(pit.getSeeds() + "|");
 		}
-		return str.toString();
+		return str.deleteCharAt(str.length() - 1).toString();
 	}
 
 	public static KalahaGame newGame(String player1, String player2) {
 		return new KalahaGame().init(player1, player2);
+	}
+	
+	public static KalahaGame fromBoardState(String gameState, String player1, String player2) {
+
+		// TODO: validate gameState - input length, sum of all seeds in 14 pits should be exactly 72 (for 6-seed 2 players game), etc
+		List<Integer> boardState = Splitter.onPattern("\\|").splitToList(gameState.replaceAll("\\s", "")).stream()
+				.mapToInt(s -> Integer.valueOf(s)).boxed().collect(Collectors.toList());
+		KalahaGame game = newGame(player1, player2);
+		game.playerToMove = game.players.get(boardState.get(0));
+		Pit pit = game.players.get(0).getFirstHouse();
+		for (int num = 1; num < boardState.size(); num++) {
+			pit.setSeeds(boardState.get(num));
+			pit = pit.getNextPit();
+		}
+		return game;
 	}
 }

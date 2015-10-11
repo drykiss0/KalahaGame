@@ -45,8 +45,16 @@ public class KalahaTest {
 	}
 	
 	@Test 
-	public void testBoardStateAsString() {
-		String strNumeric = kalaha.getBoardStateAsString().replaceAll("[^0-9]", "");
+	public void testBoardState() {
+		String strNumeric = kalaha.getBoardState().replaceAll("[^0-9]", "");
 		assertEquals("066666606666660", strNumeric);
+	}
+	
+	@Test
+	public void testFromBoardState() {
+		String state = "1|0|12|0|12|6|3|3|6|6|6|6|4|4|4";
+		KalahaGame kalaha2 = KalahaGame.fromBoardState(state, "Me", "You");
+		String state2 = kalaha2.getBoardState();
+		assertEquals(state, state2);
 	}
 }

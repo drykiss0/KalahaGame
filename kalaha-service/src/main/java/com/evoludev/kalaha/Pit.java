@@ -6,9 +6,9 @@ package com.evoludev.kalaha;
  */
 public abstract class Pit {
 
-	protected Pit nextPit;
-	protected int seeds;
-	protected int ordinal;	
+	private Pit nextPit;
+	private int seeds;
+	private int ordinal;	
 
 	public Pit(int ordinal, int seeds) {
 		this.ordinal = ordinal;
@@ -30,6 +30,10 @@ public abstract class Pit {
 	public void addSeeds(int seeds) {
 		this.seeds += seeds;
 	}
+	
+	public void setSeeds(int seeds) {
+		this.seeds = seeds;
+	}
 
 	public int getSeeds() {
 		return seeds;
@@ -43,7 +47,5 @@ public abstract class Pit {
 		return ordinal;
 	}	
 	
-	public abstract String getStringState();
 	public abstract boolean isStore();
-	
 }
