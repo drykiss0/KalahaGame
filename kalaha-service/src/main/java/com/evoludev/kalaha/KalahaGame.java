@@ -48,6 +48,14 @@ public class KalahaGame {
 	private KalahaGame() {
 	}
 	
+	/**
+	 * Initialized the game. Adds users, their houses and stores,
+	 * creates a circular linked pit list (initialized via setNextPit method),
+	 * computes opposite pit and sets it up.
+	 * @param player1name
+	 * @param player2name
+	 * @return <i>this</i>
+	 */
 	private KalahaGame init(String player1name, String player2name) {
 		List<Pit> allPits = new ArrayList<Pit>();
 		List<String> playerNames = Lists.newArrayList(player1name, player2name);
@@ -95,6 +103,13 @@ public class KalahaGame {
 				p1.getStore().getSeeds(), p2.getStore().getSeeds()));
 	}
 
+	/**
+	 * Makes a move.
+	 * @param houseNum number of current player's House from where sowing starts, starting from 0
+	 * @return <i>this</i>
+	 * @throws {@link IllegalStateException} - when makeMove is called, but the game has ended
+	 * @thriws {@link IllegalArgumentException} - in case houseNumber is invalid (out-of-range, or empty)
+	 */
 	public KalahaGame makeMove(int houseNum) {
 	
 		/* House and game state checks */
@@ -104,9 +119,9 @@ public class KalahaGame {
 		
 		Pit lastSowedPit = this.playerToMove.sowSeedsFromHouse(houseNum);
 
-		if (lastSowedPit.getSeeds() == 1 && lastSowedPit.isHouse() && playerToMove.isOwnHouse(lastSowedPit)) {
+		if (lastSowedPit.getSeeds() == 1 && lastSowedPit.isHouse()) {
 			House lastSowedHouse = (House) lastSowedPit;
-			if (!lastSowedHouse.getOppositeHouse().isEmpty()) {
+			if (playerToMove.isOwnHouse(lastSowedHouse) && !lastSowedHouse.getOppositeHouse().isEmpty()) {
 				int oppositeSeeds = lastSowedHouse.getOppositeHouse().retrieveSeeds();
 				playerToMove.getStore().addSeeds(oppositeSeeds + lastSowedHouse.retrieveSeeds());				
 			}
@@ -131,6 +146,9 @@ public class KalahaGame {
 		return players.stream().anyMatch(p -> p.isAllHousesEmpty());		
 	}
 	
+	/**
+	 * @return Game state as String. Can be used to initialize arbitrary setup of seeds on board
+	 */
 	public String getBoardState() {
 		Player firstPlayer = players.get(0);
 		StringBuilder str = new StringBuilder(this.playerToMove.getIndex() + "|" 
@@ -141,10 +159,21 @@ public class KalahaGame {
 		return str.deleteCharAt(str.length() - 1).toString();
 	}
 
+	/**
+	 * Start a fresh game of Kalaha :)
+	 * @param player1 Player1 name
+	 * @param player2 Player2 name
+	 */
 	public static KalahaGame newGame(String player1, String player2) {
 		return new KalahaGame().init(player1, player2);
 	}
 	
+	/**
+	 * Initializes Kalaha with given state. Allows to play the game with arbitrary setup of seeds.
+	 * @param gameState state, as returned by {@link getBoardState()} method
+	 * @param player1 Player1 name
+	 * @param player2 Player2 name
+	 */
 	public static KalahaGame fromBoardState(String gameState, String player1, String player2) {
 
 		// TODO: validate gameState - input length, sum of all seeds in 14 pits should be exactly 72 (for 6-seed 2 players game), etc

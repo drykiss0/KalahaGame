@@ -1,5 +1,9 @@
 package com.evoludev.kalaha;
 
+/**
+ * @author antonio
+ * Represents House in Kalaha
+ */
 public class House extends Pit {
 	
 	private House oppositeHouse;

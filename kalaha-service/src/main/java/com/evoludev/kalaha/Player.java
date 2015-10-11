@@ -10,10 +10,9 @@ import com.google.common.base.Preconditions;
 
 public class Player {
 
-	private final House firstHouse;
 	private final Store store;
 	private final List<House> houses;
-	private final Set<House> housesSet;
+	private final Set<House> housesAsSet;
 	private final int index;
 	private String name;
 	private Player nextPlayer;
@@ -21,11 +20,15 @@ public class Player {
 	public Player(List<House> houses, Store store, int index) {
 		this.houses = houses;
 		this.index = index;
-		this.housesSet = new HashSet<>(houses);
-		this.firstHouse = houses.get(0);
+		this.housesAsSet = new HashSet<>(houses);
 		this.store = store;
 	}
 	
+	/**
+	 * Start the process of sowing the seeds from given house
+	 * @param houseNum House number (starting from 0)
+	 * @return
+	 */
 	public Pit sowSeedsFromHouse(int houseNum) {
 		
 		Set<Integer> validHouseNums = getValidHouseNumbers();
@@ -39,7 +42,7 @@ public class Player {
 	}
 	
 	/**
-	 * Sows seeds pits (seeds get propagated to next pit until no seeds left) 
+	 * Sows seeds to pits (seeds get propagated to next pit until no seeds left) 
 	 * @param pit Pit where seed is added (or skipped if not a player'a store)
 	 * @param seedsToSow propagated seeds
 	 * @return Pit that received last seed
@@ -63,24 +66,34 @@ public class Player {
 			Collectors.toCollection(() -> new TreeSet<Integer>()));		
 	}
 	
+	/**
+	 * @return true if Player has no seeds to play, false otherwise
+	 */
 	public boolean isAllHousesEmpty() {
 		return houses.stream().allMatch(h -> h.getSeeds() == 0);
 	}
 
+	/**
+	 * Moves all player's seeds to his store
+	 */
 	public void moveAllOwnedSeedsToStore() {
 		for (House house: houses) {
 			getStore().addSeeds(house.retrieveSeeds());
 		}
 	}
 
-	public boolean isOwnHouse(Pit lastSowedHouse) {
-		return housesSet.contains(lastSowedHouse);
+	/**
+	 * @param house
+	 * @return true if Player owns given house, false otherwise
+	 */
+	public boolean isOwnHouse(House house) {
+		return housesAsSet.contains(house);
 	}
 
 	/* Getter,Setters */
 	
 	public House getFirstHouse() {
-		return firstHouse;
+		return houses.get(0);
 	}
 
 	public Store getStore() {
