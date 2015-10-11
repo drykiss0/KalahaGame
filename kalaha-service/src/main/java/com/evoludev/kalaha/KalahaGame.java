@@ -2,6 +2,7 @@ package com.evoludev.kalaha;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
@@ -35,7 +36,6 @@ public class KalahaGame {
 	
 	private List<Player> players = new ArrayList<>();
 	private Player playerToMove;
-	private boolean gameFinished;
 	
 	public Player getPlayerToMove() {
 		return playerToMove;
@@ -43,10 +43,6 @@ public class KalahaGame {
 
 	public List<Player> getPlayers() {
 		return players;
-	}
-
-	public boolean isGameFinished() {
-		return gameFinished;
 	}
 
 	private KalahaGame() {
@@ -90,30 +86,24 @@ public class KalahaGame {
 		return this;
 	}
 	
-	public Player getWinningPlayer() {
-		return players.stream().max((p1, p2) -> Integer.compare(
-				p1.getStore().getSeeds(), p2.getStore().getSeeds())).get();
+	/**
+	 * @return Player that wins (have won) current game or Optional.empty() if there is a draw
+	 */
+	public Optional<Player> getWinningPlayer() {
+		boolean isDraw = players.size() != players.stream().map(p->p.getStore().getSeeds()).collect(Collectors.toSet()).size();
+		return isDraw ? Optional.empty() : players.stream().max((p1, p2) -> Integer.compare(
+				p1.getStore().getSeeds(), p2.getStore().getSeeds()));
 	}
 
 	public KalahaGame makeMove(int houseNum) {
 	
 		/* House and game state checks */
-		Preconditions.checkState(!this.isGameFinished(), "Game has finished. Please restart to play again");
+		Preconditions.checkState(!isGameFinished(), "Game has finished. Please restart to play again");
 		Preconditions.checkArgument(!playerToMove.isAllHousesEmpty(), "Invalid player turn or game finished. Player " + playerToMove + " has all empty houses!");
 		/* Checks finished */
 		
-		Pit lastSowedPit = this.playerToMove.makeMove(houseNum);
+		Pit lastSowedPit = this.playerToMove.sowSeedsFromHouse(houseNum);
 
-		// TODO: Game rules could use refactoring, returns in the middle are ugly
-		List<Player> playersWithEmptyHouses = players.stream().filter(p -> p.isAllHousesEmpty()).collect(Collectors.toList());
-		if (!playersWithEmptyHouses.isEmpty()) {
-			playersWithEmptyHouses.get(0).getNextPlayer().moveAllOwnedSeedsToStore();
-			this.gameFinished = true;
-			return this;
-		}		
-		if (lastSowedPit.equals(playerToMove.getStore())) {
-			return this;
-		}
 		if (lastSowedPit.getSeeds() == 1 && lastSowedPit.isHouse() && playerToMove.isOwnHouse(lastSowedPit)) {
 			House lastSowedHouse = (House) lastSowedPit;
 			if (!lastSowedHouse.getOppositeHouse().isEmpty()) {
@@ -121,10 +111,26 @@ public class KalahaGame {
 				playerToMove.getStore().addSeeds(oppositeSeeds + lastSowedHouse.retrieveSeeds());				
 			}
 		}
-		this.playerToMove = this.playerToMove.getNextPlayer();
+
+		if (!lastSowedPit.equals(playerToMove.getStore())) {
+			this.playerToMove = this.playerToMove.getNextPlayer();
+		}
+
+		if (isGameFinished()) {
+			getPlayersWithEmptyHouses().get(0).getNextPlayer().moveAllOwnedSeedsToStore();
+		}		
+		
 		return this;
 	}
+	
+	private List<Player> getPlayersWithEmptyHouses() {
+		return players.stream().filter(p -> p.isAllHousesEmpty()).collect(Collectors.toList());
+	}
 
+	public boolean isGameFinished() {
+		return players.stream().anyMatch(p -> p.isAllHousesEmpty());		
+	}
+	
 	public String getBoardState() {
 		Player firstPlayer = players.get(0);
 		StringBuilder str = new StringBuilder(this.playerToMove.getIndex() + "|" 

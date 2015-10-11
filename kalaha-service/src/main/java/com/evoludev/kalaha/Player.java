@@ -26,12 +26,14 @@ public class Player {
 		this.store = store;
 	}
 	
-	public Pit makeMove(int houseNum) {
+	public Pit sowSeedsFromHouse(int houseNum) {
 		
 		Set<Integer> validHouseNums = getValidHouseNumbers();
 		Preconditions.checkArgument(validHouseNums.contains(houseNum), 
 				"Invalid house number: " + houseNum + ". Valid house numbers for player " + toString() 
 				+ " are: " + validHouseNums);
+		// Checks End
+		
 		int seeds = houses.get(houseNum).retrieveSeeds();
 		return sowSeeds(houses.get(houseNum).getNextPit(), seeds);
 	}
@@ -53,19 +55,16 @@ public class Player {
 		return sowSeeds(pit.getNextPit(), seedsToSow);
 	}
 
-	private List<House> getNonEmptyHouses() {
-		return houses.stream().filter(h -> h.getSeeds() > 0).collect(Collectors.toList());
-	}
-	
-	public Set<Integer> getValidHouseNumbers() {
+	private Set<Integer> getValidHouseNumbers() {
 		// Need it sorted for messages output 
-		return getNonEmptyHouses().stream()
-				.map(h -> h.getOrdinal() - getFirstHouse().getOrdinal()).collect(
-				Collectors.toCollection(() -> new TreeSet<Integer>()));		
+		return houses.stream()
+			.filter(h -> h.getSeeds() > 0)
+			.map(h -> h.getOrdinal() - getFirstHouse().getOrdinal()).collect(
+			Collectors.toCollection(() -> new TreeSet<Integer>()));		
 	}
 	
 	public boolean isAllHousesEmpty() {
-		return getNonEmptyHouses().isEmpty();
+		return houses.stream().allMatch(h -> h.getSeeds() == 0);
 	}
 
 	public void moveAllOwnedSeedsToStore() {
