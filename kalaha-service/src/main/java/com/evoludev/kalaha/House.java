@@ -32,6 +32,6 @@ public class House extends Pit {
 
 	@Override
 	public String toString() {
-		return "House [" + getSeeds() + "]";
+		return "H[" + getSeeds() + "]";
 	}
 }

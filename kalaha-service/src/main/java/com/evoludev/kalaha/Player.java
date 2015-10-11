@@ -35,7 +35,8 @@ public class Player {
 	 */
 	private Pit sowSeeds(Pit pit, int seedsToSow) {
 		if (!pit.isStore() || (pit.equals(getStore()))) {
-			pit.addSeeds(seedsToSow--);		
+			pit.addSeeds(1);
+			seedsToSow--;
 		}
 		if (seedsToSow == 0) {
 			return pit;

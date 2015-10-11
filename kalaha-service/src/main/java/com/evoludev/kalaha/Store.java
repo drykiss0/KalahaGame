@@ -12,7 +12,7 @@ public class Store extends Pit {
 
 	@Override
 	public String toString() {
-		return "Store [" + getSeeds() + "]";
+		return "S[" + getSeeds() + "]";
 	}
 
 	@Override

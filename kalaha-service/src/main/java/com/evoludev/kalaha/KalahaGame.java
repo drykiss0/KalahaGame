@@ -94,7 +94,7 @@ public class KalahaGame {
 				p1.getStore().getSeeds(), p2.getStore().getSeeds())).get();
 	}
 
-	public TurnOutcome makeMove(int houseNum) {
+	public KalahaGame makeMove(int houseNum) {
 	
 		//Preconditions.checkState(!this.isGameFinished(), "Game has finished. Please restart to play again");
 		// TODO: Validate houseNum
@@ -104,10 +104,10 @@ public class KalahaGame {
 		if (this.playerToMove.isAllHousesEmpty()) {
 			this.playerToMove.getNextPlayer().moveAllOwnedSeedsToStore();
 			this.gameFinished = true;
-			return TurnOutcome.OK;
+			return this;
 		}		
 		if (lastSowedPit.equals(playerToMove.getStore())) {
-			return TurnOutcome.OK;
+			return this;
 		}
 		if (lastSowedPit.isHouse() && playerToMove.isOwnHouse(lastSowedPit)) {
 			House lastSowedHouse = (House) lastSowedPit;
@@ -117,7 +117,7 @@ public class KalahaGame {
 			}
 		}
 		this.playerToMove = this.playerToMove.getNextPlayer();
-		return TurnOutcome.OK;
+		return this;
 	}
 
 	public String getBoardState() {

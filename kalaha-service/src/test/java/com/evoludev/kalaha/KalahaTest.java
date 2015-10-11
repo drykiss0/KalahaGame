@@ -57,4 +57,14 @@ public class KalahaTest {
 		String state2 = kalaha2.getBoardState();
 		assertEquals(state, state2);
 	}
+	
+	@Test
+	public void testGamePlayMovesFromStart() {
+		String expectedState = "0|2|2|1|11|10|10|3|8|8|7|7|1|0|2";
+		kalaha.makeMove(0).makeMove(1).makeMove(4).makeMove(2).makeMove(5);
+		System.out.println(kalaha.getBoardState());
+		assertEquals(expectedState, kalaha.getBoardState());
+		assertEquals(0, kalaha.getWinningPlayer().getIndex());
+		assertEquals(0, kalaha.getPlayerToMove().getIndex());
+	}
 }
