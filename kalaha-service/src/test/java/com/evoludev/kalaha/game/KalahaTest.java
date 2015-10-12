@@ -1,4 +1,4 @@
-package com.evoludev.kalaha;
+package com.evoludev.kalaha.game;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -9,6 +9,10 @@ import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import com.evoludev.kalaha.game.House;
+import com.evoludev.kalaha.game.KalahaGame;
+import com.evoludev.kalaha.game.Pit;
 
 public class KalahaTest {
 

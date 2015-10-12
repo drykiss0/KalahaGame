@@ -1,4 +1,4 @@
-package com.evoludev.kalaha;
+package com.evoludev.kalaha.game;
 
 /**
  * @author antonio

@@ -1,4 +1,4 @@
-package com.evoludev.kalaha;
+package com.evoludev.kalaha.game;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -178,7 +178,7 @@ public class KalahaGame {
 
 		// TODO: validate gameState - input length, sum of all seeds in 14 pits should be exactly 72 (for 6-seed 2 players game), etc
 		List<Integer> boardState = Splitter.onPattern("\\|").splitToList(gameState.replaceAll("\\s", "")).stream()
-				.mapToInt(s -> Integer.valueOf(s)).boxed().collect(Collectors.toList());
+				.map(s -> Integer.valueOf(s)).collect(Collectors.toList());
 		KalahaGame game = newGame(player1, player2);
 		game.playerToMove = game.players.get(boardState.get(0));
 		Pit pit = game.players.get(0).getFirstHouse();

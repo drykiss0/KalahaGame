@@ -1,4 +1,4 @@
-package com.evoludev.kalaha;
+package com.evoludev.kalaha.game;
 
 import java.util.HashSet;
 import java.util.List;
