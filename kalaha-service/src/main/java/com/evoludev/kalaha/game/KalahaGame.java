@@ -11,25 +11,6 @@ import com.google.common.collect.Lists;
 
 public class KalahaGame {
 	
-	public static final class TurnOutcome {
-		
-		public static final TurnOutcome OK = new TurnOutcome(true, null);
-		private final boolean success;
-		private final String message;
-		
-		public TurnOutcome(boolean success, String message) {
-			this.success = success;
-			this.message = message;
-		}
-		
-		public boolean isSuccess() {
-			return success;
-		}
-		public String getMessage() {
-			return message;
-		}
-	}
-	
 	public static final int INITIAL_SEEDS_COUNT = 6;
 	public static final int NUM_PLAYERS = 2;
 	public static final int HOUSES_PER_PLAYER = 6;
